@@ -1,0 +1,12 @@
+SMTPAuth: true
+SMTPSecure: ssl
+Port: 465
+SMTPDebug: 0
+Username: _gmail_adress_
+Password: _gmail_password_
+Host: smtp.gmail.com
+From: _some_email_adress_
+FromName: _some_name_
+To: _some_email_adress_
+Subject: 'Subject'
+Body: 'Body.'

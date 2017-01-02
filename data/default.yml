@@ -1,0 +1,14 @@
+CharSet: 'UTF-8'
+SMTPAuth: false
+SMTPSecure: ''
+Username: ''
+Password: ''
+From:     ''
+FromName: ''
+WordWrap: 50
+SMTPDebug: 0
+Host: ''
+Port: ''
+To: ''
+Subject: ''
+Body: ''

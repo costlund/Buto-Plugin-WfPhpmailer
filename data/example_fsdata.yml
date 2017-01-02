@@ -1,0 +1,11 @@
+SMTPAuth: true
+Username: _fsdata_username_
+Password: _fsdata_password_
+Host: smtp.fsdata.se
+Port: 26
+From: from@world.com
+FromName: 'Hello World'
+_comment: 'Port 587 for secure or 26?'
+To: 'info@mydomainzzz.com'
+Subject: 'Subject'
+Body: 'Body.'
