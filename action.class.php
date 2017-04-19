@@ -124,6 +124,7 @@ class PluginWfPhpmailer {
     $mail->addReplyTo($smtp['From'], $smtp['FromName']);
     $mail->AddAddress($smtp['To']);
     $mail->Subject     = $smtp['Subject'];
+    $mail->isHTML($smtp['isHTML']);
     $mail->Body        = $smtp['Body'];
     $mail->WordWrap    = $smtp['WordWrap'];
     if(!$mail->Send()) {

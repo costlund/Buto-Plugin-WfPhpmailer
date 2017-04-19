@@ -11,4 +11,5 @@ Host: ''
 Port: ''
 To: ''
 Subject: ''
+isHTML: true
 Body: ''
