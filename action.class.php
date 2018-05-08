@@ -43,12 +43,6 @@ class PluginWfPhpmailer {
   Call this function to send email.
   </p>
   <p>
-  Default settings.
-  </p>
-  #code-yml#
-  #load:[app_dir]/plugin/[plugin]/data/default.yml:load#
-  #code#
-  <p>
   Example of data when using smtp.fsdata.se mailserver.
   </p>
   #code-yml#
@@ -121,7 +115,11 @@ class PluginWfPhpmailer {
     $mail->FromName    = $smtp['FromName'];
     $mail->Host        = $smtp['Host'];
     $mail->Port        = $smtp['Port'];
-    $mail->addReplyTo($smtp['From'], $smtp['FromName']);
+    if(!isset($smtp['ReplyTo'])){
+      $mail->addReplyTo($smtp['From'], $smtp['FromName']);
+    }else{
+      $mail->addReplyTo($smtp['ReplyTo']);
+    }
     $mail->AddAddress($smtp['To']);
     $mail->Subject     = $smtp['Subject'];
     $mail->isHTML($smtp['isHTML']);
