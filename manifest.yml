@@ -1,0 +1,20 @@
+version: '1.0'
+history:
+  '1.0':
+    date: '2019-01-09'
+    description: 'First version.'
+plugin:
+  -
+    name: wf/phpmailer
+    version: '1.0'
+sys:
+  -
+    name: mercury
+    version:
+      - '1.0'
+php:
+  - '7.2'
+author: null
+links:
+  Github: 'https://github.com'
+description: ''
