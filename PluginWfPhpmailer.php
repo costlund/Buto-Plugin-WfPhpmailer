@@ -12,6 +12,9 @@ class PluginWfPhpmailer {
      * Crypt.
      */
     foreach ($smtp as $key => $value){
+      if(is_array($value)){
+        continue;
+      }
       $smtp[$key] = wfCrypt::decryptFromString($value);
     }
     /**
@@ -49,7 +52,18 @@ class PluginWfPhpmailer {
     require_once(__DIR__."/lib/class.phpmailer.php");
     require_once(__DIR__."/lib/class.smtp.php");
     /**
-     * Send email.
+     * Attachment
+     */
+    if(isset($smtp['attachment'])){
+      foreach($smtp['attachment'] as $k => $v){
+        $smtp['attachment'][$k]['path'] = wfSettings::replaceTheme($v['path']);
+        if(!wfFilesystem::fileExist(wfGlobals::getAppDir().wfSettings::replaceTheme($v['path']))){
+          return array('success' => false, 'alert' => array("Colud not find file ".$v['path'].'!'), 'smtp' => $smtp);
+        }
+      }
+    }
+    /**
+     * 
      */
     $mail = new PHPMailer();
     $mail->IsSMTP();
@@ -73,6 +87,17 @@ class PluginWfPhpmailer {
     $mail->isHTML($smtp['isHTML']);
     $mail->Body        = $smtp['Body'];
     $mail->WordWrap    = $smtp['WordWrap'];
+    /**
+     * Attachment
+     */
+    if(isset($smtp['attachment'])){
+      foreach($smtp['attachment'] as $k => $v){
+        $mail->addAttachment(wfGlobals::getAppDir().$v['path']);
+      }
+    }
+    /**
+     * Send
+     */
     if(!$mail->Send()) {
       return array('success' => false, 'alert' => array($mail->ErrorInfo), 'smtp' => $smtp);
     } else {

@@ -43,6 +43,13 @@ To: 'info@mydomainzzz.com'
 Subject: 'Subject'
 Body: 'Body.'
 ```
+## Attachment
+Use attachment param to include files.
+```
+attachment:
+  -
+    path: /theme/[theme]/README.md
+```
 
 ## Test widget
 Use this widget just for testing purpose. It will send email and output result.
