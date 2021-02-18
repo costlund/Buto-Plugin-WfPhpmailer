@@ -62,7 +62,7 @@ data:
 ```
 
 ## Known problems
-Se example of settings for Gmail and FSData.
+Example of settings using Gmail or FSData.
 
 ## Gmail
 If using Gmail maybe one should login and change application security settings (https://www.google.com/settings security).
