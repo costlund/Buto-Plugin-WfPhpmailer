@@ -1,60 +1,8 @@
 <?php
-/**
-<p>
-Plugin to send mail from other plugins.
-</p>
-#code-php#
-wfPlugin::includeonce('wf/phpmailer');
-$wf_phpmailer = new PluginWfPhpmailer();
-$wf_phpmailer->send(array('some data...'));
-#code#
-<p>
-<strong>Gmail</strong>
-</p>
-<p>
-If using Gmail maybe one should login and change application security settings (https://www.google.com/settings/security).
-</p>
-<p>
-<strong>SMTPSecure</strong>
-</p>
-<p>
-DLL php_openssl.dll must be enabled (uncomment) in php.ini if using SMTPSecure (extension=php_openssl.dll).
-</p>
- */
 class PluginWfPhpmailer {
-  /**
-  <p>
-  Use this widget just for testing purpose.
-  </p>
-  #code-yml#
-  type: widget
-  data:
-    plugin: 'wf/phpmailer'
-    method: 'send'
-    data: 'yml:/theme/[theme]/data/phpmailer.yml:gmail'
-  #code#
-   */
   public static function widget_send($data){
-    // Send email and output result.
     wfHelp::yml_dump(self::send(wfArray::get($data, 'data')));
   }
-  /**
-  <p>
-  Call this function to send email.
-  </p>
-  <p>
-  Example of data when using smtp.fsdata.se mailserver.
-  </p>
-  #code-yml#
-  #load:[app_dir]/plugin/[plugin]/data/example_fsdata.yml:load#
-  #code#
-  <p>
-  Example of data when using smtp.gmail.com mailserver.
-  </p>
-  #code-yml#
-  #load:[app_dir]/plugin/[plugin]/data/example_gmail.yml:load#
-  #code#
-   */
   public static function send($smtp){
     /**
      * Check if path string.
