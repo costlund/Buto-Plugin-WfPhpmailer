@@ -1,5 +1,8 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 class PluginWfPhpmailer {
+  public static $PHPMailer_Version = '6.5.3';
   public static function widget_send($data){
     wfHelp::yml_dump(self::send(wfArray::get($data, 'data')));
   }
@@ -49,8 +52,20 @@ class PluginWfPhpmailer {
     /**
      * Including files.
      */
-    require_once(__DIR__."/lib/class.phpmailer.php");
-    require_once(__DIR__."/lib/class.smtp.php");
+    if(PluginWfPhpmailer::$PHPMailer_Version=='6.5.3'){
+      /**
+       * PHPMailer version 6.5.3
+       */
+      require_once(__DIR__."/PHPMailer.6.5.3/src/Exception.php");
+      require_once(__DIR__."/PHPMailer.6.5.3/src/PHPMailer.php");
+      require_once(__DIR__."/PHPMailer.6.5.3/src/SMTP.php");
+    }else{
+      /**
+       * PHPMailer version 5.2.9
+       */
+      require_once(__DIR__."/lib/class.phpmailer.php");
+      require_once(__DIR__."/lib/class.smtp.php");
+    }
     /**
      * Attachment
      */
