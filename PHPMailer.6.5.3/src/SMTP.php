@@ -292,7 +292,7 @@ class SMTP
                     //Trim trailing space
                 trim(
                     //Indent for readability, except for trailing break
-                    str_replace(
+                    wfPhpfunc::str_replace(
                         "\n",
                         "\n                   \t                  ",
                         trim($str)
@@ -583,7 +583,7 @@ class SMTP
                     return false;
                 }
                 //Get the challenge
-                $challenge = base64_decode(substr($this->last_reply, 4));
+                $challenge = base64_decode(wfPhpfunc::substr($this->last_reply, 4));
 
                 //Build the response
                 $response = $username . ' ' . $this->hmac($challenge, $password);
@@ -636,7 +636,7 @@ class SMTP
         //by Lance Rushing
 
         $bytelen = 64; //byte length for md5
-        if (strlen($key) > $bytelen) {
+        if (wfPhpfunc::strlen($key) > $bytelen) {
             $key = pack('H*', md5($key));
         }
         $key = str_pad($key, $bytelen, chr(0x00));
@@ -722,14 +722,14 @@ class SMTP
          */
 
         //Normalize line breaks before exploding
-        $lines = explode("\n", str_replace(["\r\n", "\r"], "\n", $msg_data));
+        $lines = explode("\n", wfPhpfunc::str_replace(["\r\n", "\r"], "\n", $msg_data));
 
         /* To distinguish between a complete RFC822 message and a plain message body, we check if the first field
          * of the first line (':' separated) does not contain a space then it _should_ be a header and we will
          * process all lines before a blank line as headers.
          */
 
-        $field = substr($lines[0], 0, strpos($lines[0], ':'));
+        $field = wfPhpfunc::substr($lines[0], 0, strpos($lines[0], ':'));
         $in_headers = false;
         if (!empty($field) && strpos($field, ' ') === false) {
             $in_headers = true;
@@ -741,22 +741,22 @@ class SMTP
                 $in_headers = false;
             }
             //Break this line up into several smaller lines if it's too long
-            //Micro-optimisation: isset($str[$len]) is faster than (strlen($str) > $len),
+            //Micro-optimisation: isset($str[$len]) is faster than (wfPhpfunc::strlen($str) > $len),
             while (isset($line[self::MAX_LINE_LENGTH])) {
                 //Working backwards, try to find a space within the last MAX_LINE_LENGTH chars of the line to break on
                 //so as to avoid breaking in the middle of a word
-                $pos = strrpos(substr($line, 0, self::MAX_LINE_LENGTH), ' ');
+                $pos = strrpos(wfPhpfunc::substr($line, 0, self::MAX_LINE_LENGTH), ' ');
                 //Deliberately matches both false and 0
                 if (!$pos) {
                     //No nice break found, add a hard break
                     $pos = self::MAX_LINE_LENGTH - 1;
-                    $lines_out[] = substr($line, 0, $pos);
-                    $line = substr($line, $pos);
+                    $lines_out[] = wfPhpfunc::substr($line, 0, $pos);
+                    $line = wfPhpfunc::substr($line, $pos);
                 } else {
                     //Break at the found point
-                    $lines_out[] = substr($line, 0, $pos);
+                    $lines_out[] = wfPhpfunc::substr($line, 0, $pos);
                     //Move along by the amount we dealt with
-                    $line = substr($line, $pos + 1);
+                    $line = wfPhpfunc::substr($line, $pos + 1);
                 }
                 //If processing headers add a LWSP-char to the front of new line RFC822 section 3.1.1
                 if ($in_headers) {
@@ -807,7 +807,7 @@ class SMTP
         }
 
         //Some servers shut down the SMTP service here (RFC 5321)
-        if (substr($this->helo_rply, 0, 3) == '421') {
+        if (wfPhpfunc::substr($this->helo_rply, 0, 3) == '421') {
             return false;
         }
 
@@ -851,7 +851,7 @@ class SMTP
 
         foreach ($lines as $n => $s) {
             //First 4 chars contain response code followed by - or space
-            $s = trim(substr($s, 4));
+            $s = trim(wfPhpfunc::substr($s, 4));
             if (empty($s)) {
                 continue;
             }
@@ -1009,15 +1009,15 @@ class SMTP
             //Cut off error code from each response line
             $detail = preg_replace(
                 "/{$code}[ -]" .
-                ($code_ex ? str_replace('.', '\\.', $code_ex) . ' ' : '') . '/m',
+                ($code_ex ? wfPhpfunc::str_replace('.', '\\.', $code_ex) . ' ' : '') . '/m',
                 '',
                 $this->last_reply
             );
         } else {
             //Fall back to simple parsing if regex fails
-            $code = (int) substr($this->last_reply, 0, 3);
+            $code = (int) wfPhpfunc::substr($this->last_reply, 0, 3);
             $code_ex = null;
-            $detail = substr($this->last_reply, 4);
+            $detail = wfPhpfunc::substr($this->last_reply, 4);
         }
 
         $this->edebug('SERVER -> CLIENT: ' . $this->last_reply, self::DEBUG_SERVER);

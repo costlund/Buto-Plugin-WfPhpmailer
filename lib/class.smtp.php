@@ -210,7 +210,7 @@ class SMTP
             default:
                 //Normalize line breaks
                 $str = preg_replace('/(\r\n|\r|\n)/ms', "\n", $str);
-                echo gmdate('Y-m-d H:i:s') . "\t" . str_replace(
+                echo gmdate('Y-m-d H:i:s') . "\t" . wfPhpfunc::str_replace(
                     "\n",
                     "\n                   \t                  ",
                     trim($str)
@@ -295,7 +295,7 @@ class SMTP
         $this->edebug('Connection: opened', self::DEBUG_CONNECTION);
         // SMTP server can take longer to respond, give longer timeout for first read
         // Windows does not have support for this timeout function
-        if (substr(PHP_OS, 0, 3) != 'WIN') {
+        if (wfPhpfunc::substr(PHP_OS, 0, 3) != 'WIN') {
             $max = ini_get('max_execution_time');
             if ($max != 0 && $timeout > $max) { // Don't bother if unlimited
                 @set_time_limit($timeout);
@@ -414,10 +414,10 @@ class SMTP
                 }
                 //Though 0 based, there is a white space after the 3 digit number
                 //msg2
-                $challenge = substr($this->last_reply, 3);
+                $challenge = wfPhpfunc::substr($this->last_reply, 3);
                 $challenge = base64_decode($challenge);
                 $ntlm_res = $ntlm_client->NTLMResponse(
-                    substr($challenge, 24, 8),
+                    wfPhpfunc::substr($challenge, 24, 8),
                     $password
                 );
                 //msg3
@@ -435,7 +435,7 @@ class SMTP
                     return false;
                 }
                 // Get the challenge
-                $challenge = base64_decode(substr($this->last_reply, 4));
+                $challenge = base64_decode(wfPhpfunc::substr($this->last_reply, 4));
 
                 // Build the response
                 $response = $username . ' ' . $this->hmac($challenge, $password);
@@ -470,7 +470,7 @@ class SMTP
         // by Lance Rushing
 
         $bytelen = 64; // byte length for md5
-        if (strlen($key) > $bytelen) {
+        if (wfPhpfunc::strlen($key) > $bytelen) {
             $key = pack('H*', md5($key));
         }
         $key = str_pad($key, $bytelen, chr(0x00));
@@ -552,14 +552,14 @@ class SMTP
          */
 
         // Normalize line breaks before exploding
-        $lines = explode("\n", str_replace(array("\r\n", "\r"), "\n", $msg_data));
+        $lines = explode("\n", wfPhpfunc::str_replace(array("\r\n", "\r"), "\n", $msg_data));
 
         /* To distinguish between a complete RFC822 message and a plain message body, we check if the first field
          * of the first line (':' separated) does not contain a space then it _should_ be a header and we will
          * process all lines before a blank line as headers.
          */
 
-        $field = substr($lines[0], 0, strpos($lines[0], ':'));
+        $field = wfPhpfunc::substr($lines[0], 0, strpos($lines[0], ':'));
         $in_headers = false;
         if (!empty($field) && strpos($field, ' ') === false) {
             $in_headers = true;
@@ -571,21 +571,21 @@ class SMTP
                 $in_headers = false;
             }
             //We need to break this line up into several smaller lines
-            //This is a small micro-optimisation: isset($str[$len]) is equivalent to (strlen($str) > $len)
+            //This is a small micro-optimisation: isset($str[$len]) is equivalent to (wfPhpfunc::strlen($str) > $len)
             while (isset($line[self::MAX_LINE_LENGTH])) {
                 //Working backwards, try to find a space within the last MAX_LINE_LENGTH chars of the line to break on
                 //so as to avoid breaking in the middle of a word
-                $pos = strrpos(substr($line, 0, self::MAX_LINE_LENGTH), ' ');
+                $pos = strrpos(wfPhpfunc::substr($line, 0, self::MAX_LINE_LENGTH), ' ');
                 if (!$pos) { //Deliberately matches both false and 0
                     //No nice break found, add a hard break
                     $pos = self::MAX_LINE_LENGTH - 1;
-                    $lines_out[] = substr($line, 0, $pos);
-                    $line = substr($line, $pos);
+                    $lines_out[] = wfPhpfunc::substr($line, 0, $pos);
+                    $line = wfPhpfunc::substr($line, $pos);
                 } else {
                     //Break at the found point
-                    $lines_out[] = substr($line, 0, $pos);
+                    $lines_out[] = wfPhpfunc::substr($line, 0, $pos);
                     //Move along by the amount we dealt with
-                    $line = substr($line, $pos + 1);
+                    $line = wfPhpfunc::substr($line, $pos + 1);
                 }
                 //If processing headers add a LWSP-char to the front of new line RFC822 section 3.1.1
                 if ($in_headers) {
@@ -735,7 +735,7 @@ class SMTP
         $this->client_send($commandstring . self::CRLF);
 
         $this->last_reply = $this->get_lines();
-        $code = substr($this->last_reply, 0, 3);
+        $code = wfPhpfunc::substr($this->last_reply, 0, 3);
 
         $this->edebug('SERVER -> CLIENT: ' . $this->last_reply, self::DEBUG_SERVER);
 
@@ -743,7 +743,7 @@ class SMTP
             $this->error = array(
                 'error' => "$command command failed",
                 'smtp_code' => $code,
-                'detail' => substr($this->last_reply, 4)
+                'detail' => wfPhpfunc::substr($this->last_reply, 4)
             );
             $this->edebug(
                 'SMTP ERROR: ' . $this->error['error'] . ': ' . $this->last_reply,

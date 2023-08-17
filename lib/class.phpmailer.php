@@ -652,7 +652,7 @@ class PHPMailer
             default:
                 //Normalize line breaks
                 $str = preg_replace('/(\r\n|\r|\n)/ms', "\n", $str);
-                echo gmdate('Y-m-d H:i:s') . "\t" . str_replace(
+                echo gmdate('Y-m-d H:i:s') . "\t" . wfPhpfunc::str_replace(
                     "\n",
                     "\n                   \t                  ",
                     trim($str)
@@ -943,9 +943,9 @@ class PHPMailer
             case 'noregex':
                 //No PCRE! Do something _very_ approximate!
                 //Check the address is 3 chars or longer and contains an @ that's not the first or last char
-                return (strlen($address) >= 3
+                return (wfPhpfunc::strlen($address) >= 3
                     and strpos($address, '@') >= 1
-                    and strpos($address, '@') != strlen($address) - 1);
+                    and strpos($address, '@') != wfPhpfunc::strlen($address) - 1);
             case 'php':
             default:
                 return (boolean)filter_var($address, FILTER_VALIDATE_EMAIL);
@@ -1029,7 +1029,7 @@ class PHPMailer
                     $this->MIMEBody
                 );
                 $this->MIMEHeader = rtrim($this->MIMEHeader, "\r\n ") . self::CRLF .
-                    str_replace("\r\n", "\n", $header_dkim) . self::CRLF;
+                    wfPhpfunc::str_replace("\r\n", "\n", $header_dkim) . self::CRLF;
             }
             return true;
 
@@ -1497,12 +1497,12 @@ class PHPMailer
         // If utf-8 encoding is used, we will need to make sure we don't
         // split multibyte characters when we wrap
         $is_utf8 = (strtolower($this->CharSet) == 'utf-8');
-        $lelen = strlen($this->LE);
-        $crlflen = strlen(self::CRLF);
+        $lelen = wfPhpfunc::strlen($this->LE);
+        $crlflen = wfPhpfunc::strlen(self::CRLF);
 
         $message = $this->fixEOL($message);
-        if (substr($message, -$lelen) == $this->LE) {
-            $message = substr($message, 0, -$lelen);
+        if (wfPhpfunc::substr($message, -$lelen) == $this->LE) {
+            $message = wfPhpfunc::substr($message, 0, -$lelen);
         }
 
         $line = explode($this->LE, $message); // Magic. We know fixEOL uses $LE
@@ -1512,20 +1512,20 @@ class PHPMailer
             $buf = '';
             for ($e = 0; $e < count($line_part); $e++) {
                 $word = $line_part[$e];
-                if ($qp_mode and (strlen($word) > $length)) {
-                    $space_left = $length - strlen($buf) - $crlflen;
+                if ($qp_mode and (wfPhpfunc::strlen($word) > $length)) {
+                    $space_left = $length - wfPhpfunc::strlen($buf) - $crlflen;
                     if ($e != 0) {
                         if ($space_left > 20) {
                             $len = $space_left;
                             if ($is_utf8) {
                                 $len = $this->utf8CharBoundary($word, $len);
-                            } elseif (substr($word, $len - 1, 1) == '=') {
+                            } elseif (wfPhpfunc::substr($word, $len - 1, 1) == '=') {
                                 $len--;
-                            } elseif (substr($word, $len - 2, 1) == '=') {
+                            } elseif (wfPhpfunc::substr($word, $len - 2, 1) == '=') {
                                 $len -= 2;
                             }
-                            $part = substr($word, 0, $len);
-                            $word = substr($word, $len);
+                            $part = wfPhpfunc::substr($word, 0, $len);
+                            $word = wfPhpfunc::substr($word, $len);
                             $buf .= ' ' . $part;
                             $message .= $buf . sprintf('=%s', self::CRLF);
                         } else {
@@ -1533,22 +1533,22 @@ class PHPMailer
                         }
                         $buf = '';
                     }
-                    while (strlen($word) > 0) {
+                    while (wfPhpfunc::strlen($word) > 0) {
                         if ($length <= 0) {
                             break;
                         }
                         $len = $length;
                         if ($is_utf8) {
                             $len = $this->utf8CharBoundary($word, $len);
-                        } elseif (substr($word, $len - 1, 1) == '=') {
+                        } elseif (wfPhpfunc::substr($word, $len - 1, 1) == '=') {
                             $len--;
-                        } elseif (substr($word, $len - 2, 1) == '=') {
+                        } elseif (wfPhpfunc::substr($word, $len - 2, 1) == '=') {
                             $len -= 2;
                         }
-                        $part = substr($word, 0, $len);
-                        $word = substr($word, $len);
+                        $part = wfPhpfunc::substr($word, 0, $len);
+                        $word = wfPhpfunc::substr($word, $len);
 
-                        if (strlen($word) > 0) {
+                        if (wfPhpfunc::strlen($word) > 0) {
                             $message .= $part . sprintf('=%s', self::CRLF);
                         } else {
                             $buf = $part;
@@ -1558,7 +1558,7 @@ class PHPMailer
                     $buf_o = $buf;
                     $buf .= ($e == 0) ? $word : (' ' . $word);
 
-                    if (strlen($buf) > $length and $buf_o != '') {
+                    if (wfPhpfunc::strlen($buf) > $length and $buf_o != '') {
                         $message .= $buf_o . $soft_break;
                         $buf = $word;
                     }
@@ -1584,12 +1584,12 @@ class PHPMailer
         $foundSplitPos = false;
         $lookBack = 3;
         while (!$foundSplitPos) {
-            $lastChunk = substr($encodedText, $maxLength - $lookBack, $lookBack);
+            $lastChunk = wfPhpfunc::substr($encodedText, $maxLength - $lookBack, $lookBack);
             $encodedCharPos = strpos($lastChunk, '=');
             if ($encodedCharPos !== false) {
                 // Found start of encoded character byte within $lookBack block.
                 // Check the encoded byte value (the 2 chars after the '=')
-                $hex = substr($encodedText, $maxLength - $lookBack + $encodedCharPos + 1, 2);
+                $hex = wfPhpfunc::substr($encodedText, $maxLength - $lookBack + $encodedCharPos + 1, 2);
                 $dec = hexdec($hex);
                 if ($dec < 128) { // Single byte character.
                     // If the encoded char was found at pos 0, it will fit
@@ -2289,7 +2289,7 @@ class PHPMailer
             case '8bit':
                 $encoded = $this->fixEOL($str);
                 // Make sure it ends with a line break
-                if (substr($encoded, -(strlen($this->LE))) != $this->LE) {
+                if (wfPhpfunc::substr($encoded, -(wfPhpfunc::strlen($this->LE))) != $this->LE) {
                     $encoded .= $this->LE;
                 }
                 break;
@@ -2344,9 +2344,9 @@ class PHPMailer
             return ($str);
         }
 
-        $maxlen = 75 - 7 - strlen($this->CharSet);
+        $maxlen = 75 - 7 - wfPhpfunc::strlen($this->CharSet);
         // Try to select the encoding which should produce the shortest output
-        if ($matchcount > strlen($str) / 3) {
+        if ($matchcount > wfPhpfunc::strlen($str) / 3) {
             // More than a third of the content will need encoding, so B encoding will be most efficient
             $encoding = 'B';
             if (function_exists('mb_strlen') && $this->hasMultiBytes($str)) {
@@ -2362,11 +2362,11 @@ class PHPMailer
             $encoding = 'Q';
             $encoded = $this->encodeQ($str, $position);
             $encoded = $this->wrapText($encoded, $maxlen, true);
-            $encoded = str_replace('=' . self::CRLF, "\n", trim($encoded));
+            $encoded = wfPhpfunc::str_replace('=' . self::CRLF, "\n", trim($encoded));
         }
 
         $encoded = preg_replace('/^(.*)$/m', ' =?' . $this->CharSet . "?$encoding?\\1?=", $encoded);
-        $encoded = trim(str_replace("\n", $this->LE, $encoded));
+        $encoded = trim(wfPhpfunc::str_replace("\n", $this->LE, $encoded));
 
         return $encoded;
     }
@@ -2380,7 +2380,7 @@ class PHPMailer
     public function hasMultiBytes($str)
     {
         if (function_exists('mb_strlen')) {
-            return (strlen($str) > mb_strlen($str, $this->CharSet));
+            return (wfPhpfunc::strlen($str) > mb_strlen($str, $this->CharSet));
         } else { // Assume no multibytes (we can't handle without mbstring functions anyway)
             return false;
         }
@@ -2417,9 +2417,9 @@ class PHPMailer
 
         $mb_length = mb_strlen($str, $this->CharSet);
         // Each line must have length <= 75, including $start and $end
-        $length = 75 - strlen($start) - strlen($end);
+        $length = 75 - wfPhpfunc::strlen($start) - wfPhpfunc::strlen($end);
         // Average multi-byte ratio
-        $ratio = $mb_length / strlen($str);
+        $ratio = $mb_length / wfPhpfunc::strlen($str);
         // Base64 has a 4:3 ratio
         $avgLength = floor($length * $ratio * .75);
 
@@ -2430,12 +2430,12 @@ class PHPMailer
                 $chunk = mb_substr($str, $i, $offset, $this->CharSet);
                 $chunk = base64_encode($chunk);
                 $lookBack++;
-            } while (strlen($chunk) > $length);
+            } while (wfPhpfunc::strlen($chunk) > $length);
             $encoded .= $chunk . $linebreak;
         }
 
         // Chomp the last linefeed
-        $encoded = substr($encoded, 0, -strlen($linebreak));
+        $encoded = wfPhpfunc::substr($encoded, 0, -strlen($linebreak));
         return $encoded;
     }
 
@@ -2454,7 +2454,7 @@ class PHPMailer
             return $this->fixEOL(quoted_printable_encode($string));
         }
         // Fall back to a pure PHP implementation
-        $string = str_replace(
+        $string = wfPhpfunc::str_replace(
             array('%20', '%0D%0A.', '%0D%0A', '%'),
             array(' ', "\r\n=2E", "\r\n", '='),
             rawurlencode($string)
@@ -2493,7 +2493,7 @@ class PHPMailer
     {
         // There should not be any EOL in the string
         $pattern = '';
-        $encoded = str_replace(array("\r", "\n"), '', $str);
+        $encoded = wfPhpfunc::str_replace(array("\r", "\n"), '', $str);
         switch (strtolower($position)) {
             case 'phrase':
                 // RFC 2047 section 5.3
@@ -2522,11 +2522,11 @@ class PHPMailer
                 array_unshift($matches[0], '=');
             }
             foreach (array_unique($matches[0]) as $char) {
-                $encoded = str_replace($char, '=' . sprintf('%02X', ord($char)), $encoded);
+                $encoded = wfPhpfunc::str_replace($char, '=' . sprintf('%02X', ord($char)), $encoded);
             }
         }
         // Replace every spaces to _ (more readable than =20)
-        return str_replace(' ', '_', $encoded);
+        return wfPhpfunc::str_replace(' ', '_', $encoded);
     }
 
 
@@ -2858,10 +2858,10 @@ class PHPMailer
     public function fixEOL($str)
     {
         // Normalise to \n
-        $nstr = str_replace(array("\r\n", "\r"), "\n", $str);
+        $nstr = wfPhpfunc::str_replace(array("\r\n", "\r"), "\n", $str);
         // Now convert LE as needed
         if ($this->LE !== "\n") {
-            $nstr = str_replace("\n", $this->LE, $nstr);
+            $nstr = wfPhpfunc::str_replace("\n", $this->LE, $nstr);
         }
         return $nstr;
     }
@@ -2903,7 +2903,7 @@ class PHPMailer
             foreach ($images[2] as $imgindex => $url) {
                 // Convert data URIs into embedded images
                 if (preg_match('#^data:(image[^;,]*)(;base64)?,#', $url, $match)) {
-                    $data = substr($url, strpos($url, ','));
+                    $data = wfPhpfunc::substr($url, strpos($url, ','));
                     if ($match[2]) {
                         $data = base64_decode($data);
                     } else {
@@ -2925,10 +2925,10 @@ class PHPMailer
                         $directory = '';
                     }
                     $cid = md5($url) . '@phpmailer.0'; // RFC2392 S 2
-                    if (strlen($basedir) > 1 && substr($basedir, -1) != '/') {
+                    if (wfPhpfunc::strlen($basedir) > 1 && wfPhpfunc::substr($basedir, -1) != '/') {
                         $basedir .= '/';
                     }
-                    if (strlen($directory) > 1 && substr($directory, -1) != '/') {
+                    if (wfPhpfunc::strlen($directory) > 1 && wfPhpfunc::substr($directory, -1) != '/') {
                         $directory .= '/';
                     }
                     if ($this->addEmbeddedImage(
@@ -3093,7 +3093,7 @@ class PHPMailer
         // In case the path is a URL, strip any query string before getting extension
         $qpos = strpos($filename, '?');
         if ($qpos !== false) {
-            $filename = substr($filename, 0, $qpos);
+            $filename = wfPhpfunc::substr($filename, 0, $qpos);
         }
         $pathinfo = self::mb_pathinfo($filename);
         return self::_mime_types($pathinfo['extension']);
@@ -3185,7 +3185,7 @@ class PHPMailer
      */
     public function secureHeader($str)
     {
-        return trim(str_replace(array("\r", "\n"), '', $str));
+        return trim(wfPhpfunc::str_replace(array("\r", "\n"), '', $str));
     }
 
     /**
@@ -3227,7 +3227,7 @@ class PHPMailer
     public function DKIM_QP($txt)
     {
         $line = '';
-        for ($i = 0; $i < strlen($txt); $i++) {
+        for ($i = 0; $i < wfPhpfunc::strlen($txt); $i++) {
             $ord = ord($txt[$i]);
             if (((0x21 <= $ord) && ($ord <= 0x3A)) || $ord == 0x3C || ((0x3E <= $ord) && ($ord <= 0x7E))) {
                 $line .= $txt[$i];
@@ -3297,11 +3297,11 @@ class PHPMailer
             return "\r\n";
         }
         // stabilize line endings
-        $body = str_replace("\r\n", "\n", $body);
-        $body = str_replace("\n", "\r\n", $body);
+        $body = wfPhpfunc::str_replace("\r\n", "\n", $body);
+        $body = wfPhpfunc::str_replace("\n", "\r\n", $body);
         // END stabilize line endings
-        while (substr($body, strlen($body) - 4, 4) == "\r\n\r\n") {
-            $body = substr($body, 0, strlen($body) - 2);
+        while (wfPhpfunc::substr($body, wfPhpfunc::strlen($body) - 4, 4) == "\r\n\r\n") {
+            $body = wfPhpfunc::substr($body, 0, wfPhpfunc::strlen($body) - 2);
         }
         return $body;
     }
@@ -3340,15 +3340,15 @@ class PHPMailer
                 }
             }
         }
-        $from = str_replace('|', '=7C', $this->DKIM_QP($from_header));
-        $to = str_replace('|', '=7C', $this->DKIM_QP($to_header));
-        $subject = str_replace(
+        $from = wfPhpfunc::str_replace('|', '=7C', $this->DKIM_QP($from_header));
+        $to = wfPhpfunc::str_replace('|', '=7C', $this->DKIM_QP($to_header));
+        $subject = wfPhpfunc::str_replace(
             '|',
             '=7C',
             $this->DKIM_QP($subject_header)
         ); // Copied header fields (dkim-quoted-printable)
         $body = $this->DKIM_BodyC($body);
-        $DKIMlen = strlen($body); // Length of body
+        $DKIMlen = wfPhpfunc::strlen($body); // Length of body
         $DKIMb64 = base64_encode(pack('H*', sha1($body))); // Base64 of packed binary SHA-1 hash of body
         $ident = ($this->DKIM_identity == '') ? '' : ' i=' . $this->DKIM_identity . ';';
         $dkimhdrs = 'DKIM-Signature: v=1; a=' .
