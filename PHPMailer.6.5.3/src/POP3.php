@@ -391,7 +391,7 @@ class POP3
                 echo 'Client -> Server: ', $string;
             }
 
-            return fwrite($this->pop_conn, $string, wfPhpfunc::strlen($string));
+            return fwrite($this->pop_conn, $string, strlen($string));
         }
 
         return 0;
