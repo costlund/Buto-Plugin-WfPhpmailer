@@ -78,6 +78,14 @@ class PluginWfPhpmailer {
       }
     }
     /**
+     * Set ReplyTo. 
+     */
+    $smtp['ReplyTo'] = $smtp['From'];
+    /**
+     * From must always be Username since 240703.
+     */
+    $smtp['From'] = $smtp['Username'];
+    /**
      * 
      */
     $mail = new PHPMailer();
@@ -95,7 +103,7 @@ class PluginWfPhpmailer {
     if(!isset($smtp['ReplyTo'])){
       $mail->addReplyTo($smtp['From'], $smtp['FromName']);
     }else{
-      $mail->addReplyTo($smtp['ReplyTo']);
+      $mail->addReplyTo($smtp['ReplyTo'], $smtp['FromName']);
     }
     $mail->AddAddress($smtp['To']);
     $mail->Subject     = $smtp['Subject'];

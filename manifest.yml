@@ -1,5 +1,9 @@
-version: 1.6.0
+version: 1.7.0
 history:
+  1.7.0:
+    date: '2024-07-04'
+    title: 'Send'
+    description: 'ReplyTo sets equal to From. From sets equal to Username.'
   1.6.0:
     date: '2023-08-20'
     title: 'wfPhpfunc'
